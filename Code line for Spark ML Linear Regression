@@ -1,0 +1,47 @@
+---------
+
+val datasetDF = spark.read.format("csv").option("header", "true").option("inferSchema", "true").load("/user/edureka_954327/GRIP/dataset.csv")
+
+---------
+
+import org.apache.spark.ml.evaluation.RegressionEvaluator 
+import org.apache.spark.ml.regression.LinearRegression 
+import org.apache.spark.ml.tuning.{ParamGridBuilder, TrainValidationSplit} 
+import org.apache.log4j._ 
+import org.apache.spark.ml.feature.VectorAssembler 
+import org.apache.spark.mllib.linalg.Vectors 
+
+---------
+
+val scoresLabel = datasetDF.select(datasetDF("Scores").as("label"),$"Hours")
+
+---------
+
+val assembler = new VectorAssembler().setInputCols(Array("Hours")).setOutputCol("features")
+
+---------
+
+val datasetDF2 = assembler.transform(scoresLabel).select($"label",$"features") 
+
+---------
+
+val lr = new LinearRegression()
+
+---------
+
+val lrModel = lr.fit(datasetDF2)
+
+---------
+
+println(s"Coefficients: ${lrModel.coefficients} Intercept: ${lrModel.intercept}"
+
+---------
+
+val predictValue = (lrModel.coefficients.toArray(0)*(9.25))+lrModel.intercept)
+
+---------
+
+
+
+
+
